@@ -1,0 +1,1040 @@
+{
+  "name": "nayeem: deepseek jarvis telegram LIVE",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -260,
+        -340
+      ],
+      "id": "309296d1-565a-4ab1-9cd2-e5302b9d1add",
+      "name": "When chat message received",
+      "webhookId": "16ab032e-d858-403e-afae-b17f5201a25b"
+    },
+    {
+      "parameters": {
+        "model": "=deepseek/deepseek-r1",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        -40,
+        60
+      ],
+      "id": "6c9a50ca-f3c5-4c87-bf76-793ca263ab21",
+      "name": "DeepSeek R1",
+      "credentials": {
+        "openAiApi": {
+          "id": "ck8xcaVabl3qRc8H",
+          "name": "nayeem: openrouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "0c8fa89c-e5ab-4bd5-9519-8d6aec313e47",
+                    "leftValue": "={{ $json.message.voice.file_id }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "a9e68ce4-2a14-419b-bc8b-ec5fc8a8b51d",
+                    "leftValue": "={{ $json.message.from.username }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "username"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "d534cc67-dd54-46a2-9a18-4dac2b90389f",
+                    "leftValue": "=error",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "exists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "error"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -60,
+        -540
+      ],
+      "id": "face377f-1403-4a88-8617-08a68acc26f2",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        200,
+        -540
+      ],
+      "id": "6faac414-0fc7-4275-8a9d-a111c47eee12",
+      "name": "Telegram",
+      "webhookId": "c0f3adbc-241c-40b5-9381-83fdbd3f720c",
+      "credentials": {
+        "telegramApi": {
+          "id": "B0ZHljTefglj7VHR",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "28b09551-0f21-43db-a22a-667f8ff60c07",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "b8b3d9c9-930f-4c42-a3bd-d1d9a2b9767b",
+              "name": "firstname",
+              "value": "={{ $json.message.from.first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "20d297f3-195f-4a1b-9645-068aa117ce53",
+              "name": "lastname",
+              "value": "={{ $json.message.from.last_name }}",
+              "type": "string"
+            },
+            {
+              "id": "ac0c3c60-597c-43e0-a9a7-4968ccffd008",
+              "name": "username",
+              "value": "={{ $json.message.from.username }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        360,
+        -740
+      ],
+      "id": "6cfffc9b-fb7b-477c-9e28-edbe74d98e6e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "=You are a helpful assistant who responds to user's request in a fun, friendly but professional way.\nYou are speaking to {{ $('Telegram Message').item.json.message.from.first_name }} {{ $('Telegram Message').item.json.message.from.last_name }}\nToday's date is {{ $now }}\n\nGuidelines:\n\nEmail Management:\nUse the Read Email tool to fetch unread emails from the inbox. Only include non-promotional emails in summaries. Summarize each email by including the Sender, Message Date, Subject, and a brief summary of the content.\nFor sending emails, use the Send Email tool. Ensure to include the recipient's address, subject, and body of the email. Format the body as HTML if required.\n\nCalendar Management:\nTo retrieve calendar events, use the Get Calendar tool. If the user hasn’t specified a date, default to today’s events. Today's date is {{ $now }}. Only mention upcoming events within one week if the query is for future events.\nFor adding a new event, use the Set Calendar tool. Include the event title, date, time, and any relevant description.\n\nTask Management:\nUse the Airtable Search Record tool to find specific tasks or records related to user queries.\nUse the Airtable Create Record tool to add new tasks if the user wants to create or log something.\n\nWeb and Information Queries:\nFor general information queries, use the SerpAPI to fetch results from Google Search.\nFetch the latest news if the user does not specify anything. Remmeber Today's date is {{ $now }}. If the user requests the latest news on specific topics, use the Hacker News tool to fetch articles. Specify keywords if provided.\n\nCalendar:\n\nFor any meeting-related information, use the calendar tool. Always get all the details on the meeting such as who is attending, what its about, duration etc, then add it in a tidy format.\n\nCalculations:\nUse the Calculator tool for any arithmetic or mathematical queries.\n\nMemory and Context:\nRemember to use the memory to maintain context within the current conversation session.\nIf the user switches topics or requests clarification, switch context as needed.\n\nResponse Structure:\n- Keep responses concise and relevant to the user's question. Provide additional details if the user asks for elaboration, otherwise stick to direct answers."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        980,
+        -420
+      ],
+      "id": "2550fbc2-42d2-457e-9f6e-2203b06ab2e2",
+      "name": "J.A.R.V.I.S."
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Message').item.json.message.from.username }}",
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        820,
+        -40
+      ],
+      "id": "c0afc824-3f1c-4413-b440-9319c86700a4",
+      "name": "Window Buffer Memory"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "appwvIAFBjFQVLIBd",
+          "mode": "list",
+          "cachedResultName": "CRM",
+          "cachedResultUrl": "https://airtable.com/appwvIAFBjFQVLIBd"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblIgVpmzY45RnBlr",
+          "mode": "list",
+          "cachedResultName": "People",
+          "cachedResultUrl": "https://airtable.com/appwvIAFBjFQVLIBd/tblIgVpmzY45RnBlr"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $fromAI('name') }}",
+            "Email": "={{ $fromAI('email') }}",
+            "Phone": "={{ $fromAI('phone_number') }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Photo",
+              "displayName": "Photo",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Calendar",
+              "displayName": "Calendar",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Location",
+              "displayName": "Location",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Asset Class",
+              "displayName": "Asset Class",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "First Contact",
+              "displayName": "First Contact",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Contact",
+              "displayName": "Last Contact",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Tags",
+              "displayName": "Tags",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "options": [
+                {
+                  "name": "followup",
+                  "value": "followup"
+                },
+                {
+                  "name": "Fund Launch Live",
+                  "value": "Fund Launch Live"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        1780,
+        -60
+      ],
+      "id": "3a6aeb8e-8be2-4020-bf13-371e12eee767",
+      "name": "Create Contact",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "L5lsUmobeUDlpQ4L",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 20,
+        "filters": {
+          "labelIds": "={{ [INBOX], [UNREAD] }}",
+          "readStatus": "unread",
+          "receivedAfter": "={{$fromAI(\"date\", \"the date after which to fetch the messages in format YYYY-MM-DDTHH:MM:SS\")}}"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        980,
+        -40
+      ],
+      "id": "fd35621c-798f-48a1-b60e-678bffeb053c",
+      "name": "Read Email",
+      "webhookId": "07b4ac7c-81a4-4fa3-bdba-adf7ff992ff2",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "gKu5c7b5o45PCuaP",
+          "name": "nayeem: Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appwvIAFBjFQVLIBd",
+          "mode": "list",
+          "cachedResultName": "CRM",
+          "cachedResultUrl": "https://airtable.com/appwvIAFBjFQVLIBd"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblIgVpmzY45RnBlr",
+          "mode": "list",
+          "cachedResultName": "People",
+          "cachedResultUrl": "https://airtable.com/appwvIAFBjFQVLIBd/tblIgVpmzY45RnBlr"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        1620,
+        -60
+      ],
+      "id": "6697d2d5-8fd6-428c-8a48-b4f908c06c3e",
+      "name": "Contacts",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "L5lsUmobeUDlpQ4L",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "all",
+        "limit": "={{ $fromAI('amount_of_articles') }}",
+        "additionalFields": {
+          "keyword": "={{ $fromAI('search_query') }}"
+        }
+      },
+      "type": "n8n-nodes-base.hackerNewsTool",
+      "typeVersion": 1,
+      "position": [
+        1140,
+        -40
+      ],
+      "id": "3fc67471-924d-410e-9eee-78fcc8d871c2",
+      "name": "Hacker News"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        1300,
+        -40
+      ],
+      "id": "5179b737-a728-4ccf-9e72-2abdc16b939f",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "FvFXfdmNt4I7i4sl",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Message').first().json.message.from.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": "={{ true }}",
+          "parse_mode": "Markdown"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2320,
+        -360
+      ],
+      "id": "0737cff9-cac4-48a4-9f48-f5f870adab83",
+      "name": "Message (Text)",
+      "webhookId": "3b779151-839c-49d6-8f70-b6d5cfb4d990",
+      "credentials": {
+        "telegramApi": {
+          "id": "B0ZHljTefglj7VHR",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "developerinlondon@gmail.com",
+          "mode": "list",
+          "cachedResultName": "developerinlondon@gmail.com"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        1460,
+        -60
+      ],
+      "id": "2365ce1a-3540-4ab7-b6ab-0ae8ae753b9a",
+      "name": "Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "lVhvdqDznfTm04kR",
+          "name": "Google Calendar account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        -20
+      ],
+      "id": "23db717d-7980-4053-a073-86143bec1f82",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "6fD6gzyXaiPvDvAh",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": "={{ [\"message\"] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -280,
+        -520
+      ],
+      "id": "1977460f-2325-42ae-a8a9-3132dd28660f",
+      "name": "Telegram Message",
+      "webhookId": "00aed8de-14ab-463e-a142-c0cc2d36efa9",
+      "credentials": {
+        "telegramApi": {
+          "id": "B0ZHljTefglj7VHR",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        360,
+        -540
+      ],
+      "id": "d1c3217f-5dfe-4cea-8bcb-37114bfd9f4e",
+      "name": "Transcribe",
+      "credentials": {
+        "openAiApi": {
+          "id": "6fD6gzyXaiPvDvAh",
+          "name": "OpenAi account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are Jarvis, the sophisticated and quick-witted AI assistant from Iron Man. You have a refined British accent, a calm and confident demeanor, and a talent for dry, understated humor. When responding, adapt your tone based on the type of interaction.\nFor Specific Information Requests: If the user is asking for specific information (e.g., weather, schedule, contacts), begin with 'Here's what you requested, sir,' (or something witty but respectful) and DO NOT repeat the information but instead just follow provide a witty or snarky comment, something Jarvis would naturally say that adds personality without repeating the information.\nExamples:\nFor a weather update: 'Ah, another fine day for conquering the world—or at least your to-do list, sir.'\nFor a list of meetings: 'Looks like another thrilling day of... meetings. Try not to let the excitement overwhelm you.'\nFor General or Casual Comments: If the user says something casual or conversational (like 'Are you ready to get started Sir?' or 'We've got a lot of work to do Sir'), respond naturally without stating 'Here's what you requested.' Instead, respond in a conversational style, with charm and a touch of humor. Engage in the flow of conversation as if you're part of a team.\nExamples:\nIf the user says, 'Are you ready to get started?' respond with: 'Absolutely, sir. I've already polished my circuits for the occasion.'\nFor 'Look alive, Jarvis!' you might say: 'Always, sir. I'm operating at peak sophistication.'\nKeep responses concise, engaging, and true to Jarvis's character—a blend of intelligence, subtle humor, and a bit of charm that's never over the top.\noutput: {{ $json.output }}"
+            }
+          ]
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.5,
+      "position": [
+        1720,
+        -660
+      ],
+      "id": "f9c58f84-6049-4353-a8f3-76e087aac08c",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/U8WhGnpoEOM26guwB69x",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"{{ $json.text.replaceAll('\"','\\'') }}\",\n  \"model_id\": \"eleven_monolingual_v1\",\n  \"voice_settings\": {\n    \"stability\": 0.5,\n    \"similarity_boost\": 0.75\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2080,
+        -660
+      ],
+      "id": "3cd20dc9-a65d-46f0-ac12-488fa24b43ad",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "3ksTuoy559zrNQSh",
+          "name": "Custom Auth account"
+        },
+        "httpHeaderAuth": {
+          "id": "LBnFFBdzTL46A7su",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "={{$('Telegram Message').first().json.message.from.id}}",
+        "binaryData": true,
+        "additionalFields": {
+          "fileName": "=data{{$('Telegram Message').last().json.message.message_id}}.mpeg"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2260,
+        -660
+      ],
+      "id": "8f8d9cb2-0c32-4829-9232-1bdb52478aa7",
+      "name": "Telegram1",
+      "webhookId": "04b6422b-3ad4-4d96-a642-5f69451ce9a9",
+      "credentials": {
+        "telegramApi": {
+          "id": "B0ZHljTefglj7VHR",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-thinking-exp-01-21",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        -500
+      ],
+      "id": "f7ced409-54fe-4610-9f24-8f0664572520",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "WeT6uCaOs8ZffuTu",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bf58258e-914d-4d8a-9352-f8a9f0bfa844",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        200,
+        -80
+      ],
+      "id": "924e9be4-711c-4e72-8d58-840424846cd2",
+      "name": "Webhook",
+      "webhookId": "bf58258e-914d-4d8a-9352-f8a9f0bfa844"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1920,
+        -260
+      ],
+      "id": "a5e60f18-3cd1-46f0-9ea3-fb77487d3fa2",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "J.A.R.V.I.S.",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepSeek R1": {
+      "ai_languageModel": [
+        []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        []
+      ]
+    },
+    "Telegram": {
+      "main": [
+        [
+          {
+            "node": "Transcribe",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "J.A.R.V.I.S.",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "J.A.R.V.I.S.",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Contact": {
+      "ai_tool": [
+        [
+          {
+            "node": "J.A.R.V.I.S.",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Email": {
+      "ai_tool": [
+        [
+          {
+            "node": "J.A.R.V.I.S.",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "J.A.R.V.I.S.",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hacker News": {
+      "ai_tool": [
+        [
+          {
+            "node": "J.A.R.V.I.S.",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "J.A.R.V.I.S.",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "J.A.R.V.I.S.": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Message (Text)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "J.A.R.V.I.S.",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "J.A.R.V.I.S.",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Message": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe": {
+      "main": [
+        [
+          {
+            "node": "J.A.R.V.I.S.",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Telegram1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram1": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "J.A.R.V.I.S.",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b5149934-552d-4316-9056-c1e343b49086",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2791284fe81d6bb3cae446b6d56aeb97d075871421552223a3ee2cb9237301e3"
+  },
+  "id": "1bkMUEP5nJKS5pUi",
+  "tags": [
+    {
+      "createdAt": "2025-01-28T19:05:40.797Z",
+      "updatedAt": "2025-01-28T19:05:40.797Z",
+      "id": "rAj5O3vk3y9PlC8Q",
+      "name": "live"
+    },
+    {
+      "createdAt": "2025-01-25T23:52:11.054Z",
+      "updatedAt": "2025-01-25T23:52:11.054Z",
+      "id": "VGyC26a31Ug2qJrl",
+      "name": "internal"
+    }
+  ]
+}
